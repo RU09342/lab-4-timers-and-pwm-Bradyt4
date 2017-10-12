@@ -1,28 +1,33 @@
 # Software PWM
-Most microprocessors will have a Timer module, but depending on the device, some may not come with pre-built PWM modules. Instead, you may have to utilize software techniques to synthesize PWM on your own.
 
-## Task
-You need to generate a 1kHz PWM signal with a duty cycle between 0% and 100%. Upon the processor starting up, you should PWM one of the on-board LEDs at a 50% duty cycle. Upon pressing one of the on-board buttons, the duty cycle of the LED should increase by 10%. Once you have reached 100%, your duty cycle should go back to 0% on the next button press. You also need to implement the other LED to light up when the Duty Cycle button is depressed and turns back off when it is let go. This is to help you figure out if the button has triggered multiple interrupts.
+## Tyler Brady
 
-### Hints
-You really, really, really, really need to hook up the output of your LED pin to an oscilloscope to make sure that the duty cycle is accurate. Also, since you are going to be doing a lot of initialization, it would be helpful for all persons involved if you created your main function like:
-'''c
-int main(void)
-{
-	WDTCTL = WDTPW | WDTHOLD;	// stop watchdog timer
-	LEDSetup(); // Initialize our LEDS
-	ButtonSetup();  // Initialize our button
-	TimerA0Setup(); // Initialize Timer0
-	TimerA1Setup(); // Initialize Timer1
-	__bis_SR_register(LPM0_bits + GIE);       // Enter LPM0 w/ interrupt
-}
-'''
-This way, each of the steps in initialization can be isolated for easier understanding and debugging.
+## Background
+* Pulse width modulation is the method of sending a signal with a specific frequency, however with a slight difference, as
+the time at which the signal is high is different. This percentage of time high vs low is call the duty cycle.
+Using this method its possible to make an LED look to be dimmer at lower duty cycles and higher frequencies.
+This may sound complicated, but the actual implementation is quite simple. Since in the MSP430 timers, each timer has access to more than one 
+capture/compare register, it is possible to set up a timer to trigger more than once with two different interrupts.
+Using this method one can set up two timer interrupts, one which has a changing trigger, and one which always triggers a 1k clock cycles.
+The first interrupt will toggle the LED off, while the second will toggle the LED back on.
 
+* Then by adding in a debounced button interrupt it is possible to change the point at which the first interrupt fires by 100 cycles, changing the
+duty cycle by 10%. This has the offhanded affect of making the brightness of the LED increase as the button is pressed.
 
-## Extra Work
-### Linear Brightness
-Much like every other things with humans, not everything we interact with we perceive as linear. For senses such as sight or hearing, certain features such as volume or brightness have a logarithmic relationship with our senses. Instead of just incrementing by 10%, try making the brightness appear to change linearly. 
+##Usage
+* The code for this function has been coded for all five MSP430 boards and once loaded onto the board can be demonstrated by simply pressing the 
+designated button.
 
-### Power Comparison
-Since you are effectively turning the LED off for some period of time, it should follow that the amount of power you are using over time should be less. Using Energy Trace, compare the power consumption of the different duty cycles. What happens if you use the pre-divider in the timer module for the PWM (does it consume less power)?
+## Devices
+* MSP430G2553
+* MSP430FR2311
+* MSP430FR5994
+* MSP430FR6989
+* MSP430F5529
+
+## Differences
+* The differences between each board is mostly just differences between pins on boards and timer setup/macros. Otherwise the only other big difference
+is the 2311's lack of a timer A.
+
+## Extra work
+* NONE 
