@@ -14,7 +14,7 @@ The first interrupt will toggle the LED off, while the second will toggle the LE
 * Then by adding in a debounced button interrupt it is possible to change the point at which the first interrupt fires by 100 cycles, changing the
 duty cycle by 10%. This has the offhanded affect of making the brightness of the LED increase as the button is pressed.
 
-##Usage
+## Usage
 * The code for this function has been coded for all five MSP430 boards and once loaded onto the board can be demonstrated by simply pressing the 
 designated button.
 
