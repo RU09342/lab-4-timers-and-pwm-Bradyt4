@@ -38,7 +38,7 @@ int main(void)
 __interrupt void Timer1_A (void) //Deals with slight button bounce issue while also turning off the light after a set time.
 {
     P1IE |= BIT1; //Enables P1.1 interrupt
-    TA0CTL = 0x0000; //Disables and resets Timer A0
+    TA1CTL = 0x0000; //Disables and resets Timer A0
     P1IFG &= ~BIT1; //Disables interrupt flag
     P4OUT &= ~BIT7; //Disables P4.7
 }
@@ -47,15 +47,15 @@ __interrupt void Timer1_A (void) //Deals with slight button bounce issue while a
 __interrupt void Port_1(void)
 {
     P4OUT |= BIT7; //Enables P4.7
-    if(TA1CCR1 >= 1000)//Logic to increase the duty cycle by 10%
+    if(TA0CCR1 >= 1000)//Logic to increase the duty cycle by 10%
     {
-        TA1CCR1 = 0;
+        TA0CCR1 = 0;
     }
     else
     {
-        TA1CCR1 += 100;
+        TA0CCR1 += 100;
     }
-    TA0CTL = TASSEL_1 | MC__UP; // AClock, Up mode
+    TA1CTL = TASSEL_1 | MC__UP; // AClock, Up mode
     P1IE &= ~BIT1; //Disables interrupt on P5.6
     P1IFG &= ~BIT1; //Disables interrupt flag
 
